@@ -1,1 +1,40 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Reload labeled data for visualization
+df_clusters = pd.read_csv(labeled_csv_path)
+
+# Set up Seaborn style
+sns.set(style="whitegrid")
+
+# Create a labeled cluster scatter plot
+plt.figure(figsize=(10, 6))
+scatter = sns.scatterplot(
+    data=df_clusters,
+    x="Tenure",
+    y="MonthlyCharges",
+    hue="Cluster",
+    palette="deep",
+    style="Cluster",
+    s=100
+)
+
+# Add annotations for cluster centers (based on means)
+centers = df_clusters.groupby("Cluster")[["Tenure", "MonthlyCharges"]].mean().reset_index()
+for _, row in centers.iterrows():
+    plt.text(row["Tenure"], row["MonthlyCharges"], f"Cluster {int(row['Cluster'])}", 
+             fontsize=12, weight='bold', ha='center', va='center', bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=1))
+
+plt.title("Customer Segmentation Based on Tenure and Monthly Charges", fontsize=14)
+plt.xlabel("Tenure (Standardized)")
+plt.ylabel("Monthly Charges (Standardized)")
+plt.legend(title="Cluster")
+plt.tight_layout()
+
+# Save updated visualization
+labeled_cluster_plot_path = os.path.join(base_dir, "Cluster_Visualisations", "cluster_plot_labeled.png")
+plt.savefig(labeled_cluster_plot_path)
+plt.close()
+
+labeled_cluster_plot_path  # Return path to labeled plot image
 
